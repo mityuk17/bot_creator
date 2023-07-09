@@ -50,6 +50,8 @@ async def thread_work(sessions: list[Session], session_controller: Sessions_Cont
             delay = response.get('delay')
             if delay:
                 print(f'У сессии {session_name} таймаут: {delay}')
+                if delay > 60 * 60:
+                    sessions.remove(session)
                 continue
             token = response.get('token')
             username = response.get('username')

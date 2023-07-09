@@ -83,7 +83,6 @@ async def create_bot(session: Session, bot_name: str, bot_username_mask: str, bo
     try:
         msg = [i async for i in client.get_chat_history(chat_id=settings.botfather_id, limit=1)][0]
         if msg.text.startswith('Sorry, too many attempts.'):
-            print(msg.text)
             time_delay = int(msg.text.split()[-2])
             result['delay'] = time_delay
             return result
