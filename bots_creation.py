@@ -110,18 +110,22 @@ async def create_bot(session: Session, bot_name: str, bot_username_mask: str, bo
         raise exceptions.SessionError
     msg_text = None
     while True:
-        bot_username = make_username(bot_username_mask) + '_bot'
-        await client.send_message(chat_id=settings.botfather_id, text=bot_username)
-        await asyncio.sleep(3)
         try:
-            msg = [i async for i in client.get_chat_history(chat_id=settings.botfather_id, limit=1)][0]
-            if msg.text.startswith('Sorry,'):
-                continue
-            elif msg.text.startswith('Done!'):
-                msg_text = msg.text
-                break
-            else:
-                raise exceptions.NotFinishedSessionError
+            bot_username = make_username(bot_username_mask) + '_bot'
+            await client.send_message(chat_id=settings.botfather_id, text=bot_username)
+            await asyncio.sleep(3)
+            try:
+                msg = [i async for i in client.get_chat_history(chat_id=settings.botfather_id, limit=1)][0]
+                if msg.text.startswith('Sorry,'):
+                    continue
+                elif msg.text.startswith('Done!'):
+                    msg_text = msg.text
+                    break
+                else:
+                    raise exceptions.NotFinishedSessionError
+            except Exception as e:
+                print(e)
+                raise exceptions.SessionError
         except Exception as e:
             print(e)
             raise exceptions.SessionError

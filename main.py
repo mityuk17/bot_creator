@@ -7,17 +7,19 @@ import threading
 from bots_creation import create_bot
 
 
-def run_thread_work(sessions, session_contoller, bot_info):
-    asyncio.run(thread_work(sessions, session_contoller, bot_info))
+def run_thread_work(sessions, session_controller, bot_info):
+    asyncio.run(thread_work(sessions, session_controller, bot_info))
 
 
 def write_data(thread_name, result):
     with open(f'result/tokens.txt', 'a') as file:
         file.write('\n'.join([i.split()[1] for i in result]))
+        file.write('\n')
     with open(f'result/tokens_{thread_name}.txt', 'w') as file:
         file.write('\n'.join([i.split()[1] for i in result]))
     with open(f'result/urls.txt', 'a') as file:
         file.write('\n'.join([i.split()[0] for i in result]))
+        file.write('\n')
     with open(f'result/urls_{thread_name}.txt', 'w') as file:
         file.write('\n'.join([i.split()[0] for i in result]))
     with open(f'result/result_{thread_name}.txt', 'w') as file:
