@@ -8,7 +8,10 @@ from bots_creation import create_bot
 
 
 def run_thread_work(sessions, session_controller, bot_info):
-    asyncio.run(thread_work(sessions, session_controller, bot_info))
+    try:
+        asyncio.run(thread_work(sessions, session_controller, bot_info))
+    except Exception as e:
+        print(e, e.args)
 
 
 def write_data(thread_name, result):
@@ -44,6 +47,7 @@ async def thread_work(sessions: list[Session], session_controller: Sessions_Cont
         session_name = session.session_path.split('/')[-1].split('.')[0]
         try:
             if session.bots_created == bots_amount:
+                session_controller.session_executed(session)
                 sessions.remove(session)
                 continue
             response = await create_bot(session, name, username_mask, description, about, image_path)
@@ -111,9 +115,14 @@ def main():
         'username_mask': username_mask,
         'bots_amount': bots_amount
     }
+    threads = list()
     for th in range(threads_amount):
         thread = threading.Thread(target=run_thread_work, args=[sessions[th], controller, bot_info])
         thread.start()
+        threads.append(thread)
+    for thread in threads:
+        thread.join()
+    print('Работа завершена')
     while True:
         pass
 
