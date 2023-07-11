@@ -1,0 +1,7 @@
+aiogram==2.22.2
+aiohttp==3.8.3
+opentele==1.15.1
+Pyrogram==2.0.97
+Requests==2.31.0
+TGConvertor==0.0.7
+TGConvertor==0.0.7
