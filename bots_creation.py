@@ -15,6 +15,7 @@ import random
 import settings
 from pathlib import Path
 import asyncio
+import pyrogram
 
 
 def make_username(bot_username_mask: str) -> str:

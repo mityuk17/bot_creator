@@ -2,7 +2,7 @@ import asyncio
 import random
 import exceptions
 from utils import *
-from sessions_contoller import Sessions_Contoller, Session, Proxy
+from sessions_contoller import Sessions_Contoller, Session
 import threading
 from bots_creation import create_bot
 
