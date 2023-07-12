@@ -77,7 +77,7 @@ class Sessions_Contoller():
                    f'{self.sessions_directory}/errored/{session_name}.json')
 
     def session_executed(self, session: Session):
-        session_name=session.session_path.split('/')[-1].split('.')[0]
+        session_name = session.session_path.split('/')[-1].split('.')[0]
         os.replace(session.session_path, f'{self.sessions_directory}/executed/{session_name}.session')
         os.replace(f'{self.sessions_directory}/source/{session_name}.json',
                    f'{self.sessions_directory}/executed/{session_name}.json')

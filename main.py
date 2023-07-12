@@ -7,6 +7,9 @@ import threading
 from bots_creation import create_bot
 
 
+lock = threading.Lock()
+
+
 def run_thread_work(sessions, session_controller, bot_info):
     try:
         asyncio.run(thread_work(sessions, session_controller, bot_info))
@@ -14,28 +17,25 @@ def run_thread_work(sessions, session_controller, bot_info):
         print(e, e.args)
 
 
-def write_data(thread_name, result):
-    with open(f'result/tokens.txt', 'a') as file:
-        file.write('\n'.join([i.split()[1] for i in result]))
-        file.write('\n')
-    with open(f'result/tokens_{thread_name}.txt', 'w') as file:
-        file.write('\n'.join([i.split()[1] for i in result]))
-    with open(f'result/urls.txt', 'a') as file:
-        file.write('\n'.join([i.split()[0] for i in result]))
-        file.write('\n')
-    with open(f'result/urls_{thread_name}.txt', 'w') as file:
-        file.write('\n'.join([i.split()[0] for i in result]))
-    with open(f'result/result_{thread_name}.txt', 'w') as file:
-        file.write('\n'.join(result))
-    with open('result/result.txt', 'a') as file:
-        file.write('\n'.join(result))
-        file.write('\n')
+def write_data(thread_name, result: dict):
+    with lock:
+        with open(f'result/tokens.txt', 'a') as file:
+            file.write(result.get('token') + '\n')
+        with open(f'threads_result/tokens_{thread_name}.txt', 'w') as file:
+            file.write(result.get('token') + '\n')
+        with open(f'result/urls.txt', 'a') as file:
+            file.write(result.get('username') + '\n')
+        with open(f'threads_result/urls_{thread_name}.txt', 'w') as file:
+            file.write(result.get('username') + '\n')
+        with open(f'threads_result/result_{thread_name}.txt', 'w') as file:
+            file.write(f'''{result.get('token')} {result.get('username')} \n''')
+        with open('result/result.txt', 'a') as file:
+            file.write(f'''{result.get('token')} {result.get('username')} \n''')
 
 
 async def thread_work(sessions: list[Session], session_controller: Sessions_Contoller, bot_info):
     thread_name = threading.current_thread().name
     print(f'Поток {thread_name} начал работу')
-    result = list()
     name = bot_info.get('name')
     image_path = bot_info.get('image_path')
     description = bot_info.get('description')
@@ -60,9 +60,9 @@ async def thread_work(sessions: list[Session], session_controller: Sessions_Cont
             token = response.get('token')
             username = response.get('username')
             if token and username:
-                result.append({'token': token,
-                               'username': username})
-                print(result[-1])
+                result = {'token': token, 'username': f't.me/{username}'}
+                print(result)
+                write_data(thread_name, result)
             sessions[-1].bots_created += 1
             sessions = [sessions[-1]] + sessions[:-1]
         except exceptions.SessionError as e:
@@ -84,10 +84,6 @@ async def thread_work(sessions: list[Session], session_controller: Sessions_Cont
             session_controller.session_error(session)
             sessions.remove(session)
             print(e)
-    for i in range(len(result)):
-        url = f'''t.me/{result[i].get('username')}'''
-        result[i] = f'''{url} {result[i].get('token')}'''
-    write_data(thread_name, result)
     print(f'Поток {thread_name} закончил работу')
 
 

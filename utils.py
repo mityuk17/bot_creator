@@ -65,7 +65,7 @@ def get_image_path() -> str:
 
 def get_bot_about() -> str:
     if os.path.exists('about.txt'):
-        with open('about.txt', 'r') as file:
+        with open('about.txt', 'r', encoding='utf8') as file:
             about = file.readline()
             if about:
                 return about
@@ -74,7 +74,7 @@ def get_bot_about() -> str:
 
 def get_bot_description() -> str:
     if os.path.exists('description.txt'):
-        with open('description.txt', 'r') as file:
+        with open('description.txt', 'r', encoding='utf8') as file:
             description = file.readline()
             if description:
                 return description
@@ -83,7 +83,7 @@ def get_bot_description() -> str:
 
 def get_bot_name() -> str:
     if os.path.exists('name.txt'):
-        with open('name.txt') as file:
+        with open('name.txt', encoding='utf8') as file:
             name = file.readline()
             if name:
                 return name
@@ -103,6 +103,7 @@ def get_bots_amount() -> int:
     while not num_bots.isdigit():
         num_bots = input('Введите количество ботов для создания на каждом аккаунте')
     return int(num_bots)
+
 
 def get_bot_username_mask() -> str:
     if os.path.exists('username.txt'):
