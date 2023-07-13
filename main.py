@@ -21,13 +21,13 @@ def write_data(thread_name, result: dict):
     with lock:
         with open(f'result/tokens.txt', 'a') as file:
             file.write(result.get('token') + '\n')
-        with open(f'threads_result/tokens_{thread_name}.txt', 'w') as file:
+        with open(f'threads_result/tokens_{thread_name}.txt', 'a') as file:
             file.write(result.get('token') + '\n')
         with open(f'result/urls.txt', 'a') as file:
             file.write(result.get('username') + '\n')
-        with open(f'threads_result/urls_{thread_name}.txt', 'w') as file:
+        with open(f'threads_result/urls_{thread_name}.txt', 'a') as file:
             file.write(result.get('username') + '\n')
-        with open(f'threads_result/result_{thread_name}.txt', 'w') as file:
+        with open(f'threads_result/result_{thread_name}.txt', 'a') as file:
             file.write(f'''{result.get('token')} {result.get('username')} \n''')
         with open('result/result.txt', 'a') as file:
             file.write(f'''{result.get('token')} {result.get('username')} \n''')

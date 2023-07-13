@@ -1,1 +1,1 @@
-test_bot_name
+Bot's имя
