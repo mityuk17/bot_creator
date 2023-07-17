@@ -66,7 +66,9 @@ async def create_bot(session: Session, bot_name: str, bot_username_mask: str, bo
         session = await SessionManager.from_telethon_file(Path(session.session_path), api=api)
         client = session.pyrogram_client(proxy=proxy)
     except Exception as e:
+        print('----')
         print(e)
+        print('----')
         raise exceptions.SessionError
     try:
         await client.start()
@@ -78,57 +80,64 @@ async def create_bot(session: Session, bot_name: str, bot_username_mask: str, bo
         await client.send_message(chat_id=settings.botfather_id, text='/start')
         await client.send_message(chat_id=settings.botfather_id, text='/newbot')
     except Exception as e:
+        print('----')
         print(e)
+        print('----')
         raise exceptions.SessionError
     await asyncio.sleep(3)
     try:
         msg = [i async for i in client.get_chat_history(chat_id=settings.botfather_id, limit=1)][0]
-        if msg.text.startswith('Sorry, too many attempts.'):
-            time_delay = int(msg.text.split()[-2])
-            result['delay'] = time_delay
-            return result
-        elif msg.text.startswith('Alright, a new bot.'):
-            pass
-        else:
-            raise exceptions.NotFinishedSessionError
     except Exception as e:
+        print('----')
         print(e)
+        print('----')
         raise exceptions.SessionError
+    if msg.text.startswith('Sorry, too many attempts.'):
+        time_delay = int(msg.text.split()[-2])
+        result['delay'] = time_delay
+        return result
+    elif msg.text.startswith('Alright, a new bot.'):
+        pass
+    else:
+        raise exceptions.NotFinishedSessionError
     try:
         await client.send_message(chat_id=settings.botfather_id, text=bot_name)
     except Exception as e:
+        print('----')
         print(e)
+        print('----')
         raise exceptions.SessionError
     try:
         msg = [i async for i in client.get_chat_history(chat_id=settings.botfather_id, limit=1)][0]
-        if msg.text.startswith('Good.'):
-            pass
-        else:
-            raise exceptions.NotFinishedSessionError
     except Exception as e:
+        print('----')
         print(e)
+        print('----')
         raise exceptions.SessionError
+    if msg.text.startswith('Good.'):
+        pass
+    else:
+        raise exceptions.NotFinishedSessionError
+
     msg_text = None
     while True:
         try:
             bot_username = make_username(bot_username_mask) + '_bot'
             await client.send_message(chat_id=settings.botfather_id, text=bot_username)
             await asyncio.sleep(3)
-            try:
-                msg = [i async for i in client.get_chat_history(chat_id=settings.botfather_id, limit=1)][0]
-                if msg.text.startswith('Sorry,'):
-                    continue
-                elif msg.text.startswith('Done!'):
-                    msg_text = msg.text
-                    break
-                else:
-                    raise exceptions.NotFinishedSessionError
-            except Exception as e:
-                print(e)
-                raise exceptions.SessionError
+            msg = [i async for i in client.get_chat_history(chat_id=settings.botfather_id, limit=1)][0]
         except Exception as e:
+            print('----')
             print(e)
+            print('----')
             raise exceptions.SessionError
+        if msg.text.startswith('Sorry,'):
+            continue
+        elif msg.text.startswith('Done!'):
+            msg_text = msg.text
+            break
+        else:
+            raise exceptions.NotFinishedSessionError
     if not msg_text:
         raise exceptions.NotFinishedSessionError
     token = msg_text.split('\n')[3]

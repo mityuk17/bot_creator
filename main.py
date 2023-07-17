@@ -5,8 +5,10 @@ from utils import *
 from sessions_contoller import Sessions_Contoller, Session
 import threading
 from bots_creation import create_bot
+import logging
 
 
+logging.basicConfig(level=logging.INFO)
 lock = threading.Lock()
 
 
@@ -68,18 +70,18 @@ async def thread_work(sessions: list[Session], session_controller: Sessions_Cont
         except exceptions.SessionError as e:
             session_controller.session_error(session)
             sessions.remove(session)
-            print(e)
+            print('''SessionError''')
         except exceptions.NotFinishedSessionError as e:
             session_controller.session_not_finished(session)
             sessions.remove(session)
-            print(e)
+            print('''NotFinishedSessionError''')
         except exceptions.BannedSessionError as e:
             session_controller.session_banned(session)
             sessions.remove(session)
-            print(e)
+            print('''BannedSessionError''')
         except exceptions.BadProxyError as e:
             session.proxy = random.choice(session_controller.get_proxies())
-            print(e)
+            print('''BadProxyError''')
         except Exception as e:
             session_controller.session_error(session)
             sessions.remove(session)
