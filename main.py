@@ -21,17 +21,17 @@ def run_thread_work(sessions, session_controller, bot_info):
 
 def write_data(thread_name, result: dict):
     with lock:
-        with open(f'result/tokens.txt', 'a') as file:
+        with open(f'result/tokens.txt', 'a+') as file:
             file.write(result.get('token') + '\n')
-        with open(f'threads_result/tokens_{thread_name}.txt', 'a') as file:
+        with open(f'threads_result/tokens_{thread_name}.txt', 'a+') as file:
             file.write(result.get('token') + '\n')
-        with open(f'result/urls.txt', 'a') as file:
+        with open(f'result/urls.txt', 'a+') as file:
             file.write(result.get('username') + '\n')
-        with open(f'threads_result/urls_{thread_name}.txt', 'a') as file:
+        with open(f'threads_result/urls_{thread_name}.txt', 'a+') as file:
             file.write(result.get('username') + '\n')
-        with open(f'threads_result/result_{thread_name}.txt', 'a') as file:
+        with open(f'threads_result/result_{thread_name}.txt', 'a+') as file:
             file.write(f'''{result.get('token')} {result.get('username')} \n''')
-        with open('result/result.txt', 'a') as file:
+        with open('result/result.txt', 'a+') as file:
             file.write(f'''{result.get('token')} {result.get('username')} \n''')
 
 
@@ -42,11 +42,13 @@ async def thread_work(sessions: list[Session], session_controller: Sessions_Cont
     image_path = bot_info.get('image_path')
     description = bot_info.get('description')
     about = bot_info.get('about')
-    username_mask = bot_info.get('username_mask')
+    username_masks = bot_info.get('username_masks')
     bots_amount = bot_info.get('bots_amount')
     while sessions:
         session = sessions[-1]
         session_name = session.session_path.split('/')[-1].split('.')[0]
+        username_mask = username_masks.pop()
+        username_masks = [username_mask] + username_masks
         try:
             if session.bots_created == bots_amount:
                 session_controller.session_executed(session)
@@ -94,8 +96,8 @@ def main():
     description = get_bot_description()
     print(description)
     about = get_bot_about()
-    username_mask = get_bot_username_mask()
-    if not username_mask:
+    username_masks = get_bot_username_masks()
+    if not username_masks:
         print('Bot username_mask not found')
         return
     name = get_bot_name()
@@ -111,7 +113,7 @@ def main():
         'image_path': image_path,
         'description': description,
         'about': about,
-        'username_mask': username_mask,
+        'username_masks': username_masks,
         'bots_amount': bots_amount
     }
     threads = list()

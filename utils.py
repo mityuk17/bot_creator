@@ -109,10 +109,12 @@ def get_bots_amount() -> int:
     return int(num_bots)
 
 
-def get_bot_username_mask() -> str:
+def get_bot_username_masks() -> list[str]:
     if os.path.exists('username.txt'):
         with open('username.txt') as file:
-            username = file.readline()
-            if username:
-                return username
+            usernames = file.readlines()
+            if usernames:
+                for i in range(len(usernames)):
+                    usernames[i] = usernames[i].strip()
+                return usernames[::-1]
     return None
