@@ -92,6 +92,7 @@ async def thread_work(sessions: list[Session], session_controller: Sessions_Cont
 def main():
     image_path = get_image_path()
     description = get_bot_description()
+    print(description)
     about = get_bot_about()
     username_mask = get_bot_username_mask()
     if not username_mask:

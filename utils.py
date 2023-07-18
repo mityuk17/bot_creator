@@ -75,9 +75,13 @@ def get_bot_about() -> str:
 def get_bot_description() -> str:
     if os.path.exists('description.txt'):
         with open('description.txt', 'r', encoding='utf8') as file:
-            description = file.readline()
-            if description:
-                return description
+            description = file.readlines()
+            if not description:
+                return None
+            for i in range(len(description)):
+                description[i] = description[i].strip()
+            description = '\n'.join(description)
+            return description
     return None
 
 
