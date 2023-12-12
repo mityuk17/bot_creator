@@ -1,1 +1,1 @@
-botfather_id = 93372553
+botfather_id = 0
